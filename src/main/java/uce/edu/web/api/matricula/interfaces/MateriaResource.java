@@ -12,38 +12,56 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 import uce.edu.web.api.matricula.application.MateriaService;
 import uce.edu.web.api.matricula.domain.Materia;
 
 @Path("/materias")
-@Produces(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
-@Consumes(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+/*
+ * @Produces(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+ * 
+ * @Consumes(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+ */
+
 public class MateriaResource {
     @Inject
     private MateriaService materiaService;
 
+    /*
+     * @GET
+     * 
+     * @Path("")
+     * public List<Materia> consultarTodos() {
+     * return this.materiaService.listarTodos();
+     * }
+     */
+
     @GET
     @Path("")
+    @Consumes(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
     public List<Materia> consultarTodos() {
         return this.materiaService.listarTodos();
     }
 
     @GET
     @Path("/{id}")
+    @Produces(jakarta.ws.rs.core.MediaType.APPLICATION_XML)
     public Materia consultarTodosId(@PathParam("id") Integer id) {
         return this.materiaService.listarTodosId(id);
     }
 
     @POST
     @Path("")
-    public void guardarMateria(Materia materia) {
+    public Response guardarMateria(Materia materia) {
         this.materiaService.guardarMateria(materia);
+        return Response.status(Response.Status.CREATED).entity(materia).build();
     }
 
     @PUT
     @Path("/{id}")
-    public void actualizarMateria(@PathParam("id") Integer id, Materia materia) {
+    public Response actualizarMateria(@PathParam("id") Integer id, Materia materia) {
         this.materiaService.actualizarMateria(id, materia);
+        return Response.status(209).entity(null).build();
     }
 
     @PATCH
