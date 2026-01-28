@@ -15,58 +15,6 @@ public class EstudianteService {
     @Inject
     private EstudianteRepository estudianteRepository;
 
-    public List<EstudianteRepresentation> listarTodos() {
-        return this.estudianteRepository.findAll().list().stream()
-                .map(this::mapperToER)
-                .toList();
-    }
-
-    public EstudianteRepresentation consultarPorId(Integer id) {
-        return this.mapperToER(this.estudianteRepository.findById(id.longValue()));
-    }
-
-    private Estudiante consultarPorIdInterno(Integer id) {
-        return this.estudianteRepository.findById(id.longValue());
-    }
-
-    @Transactional
-    public void crearEstudiante(Estudiante estudiante) {
-        this.estudianteRepository.persist(estudiante);
-    }
-
-    @Transactional
-    public void actualizarEstudiante(Integer id, Estudiante estudiante) {
-        Estudiante estudianteActual = this.consultarPorIdInterno(id);
-        estudianteActual.setNombre(estudiante.getNombre());
-        estudianteActual.setApellido(estudiante.getApellido());
-        estudianteActual.setFechaNacimiento(estudiante.getFechaNacimiento());
-        // se actualiza por dirty checking
-    }
-
-    @Transactional
-    public void actualizacionParcial(Integer id, Estudiante estudiante) {
-        Estudiante estudianteActual = this.consultarPorIdInterno(id);
-        if (estudiante.getNombre() != null) {
-            estudianteActual.setNombre(estudiante.getNombre());
-        }
-        if (estudiante.getApellido() != null) {
-            estudianteActual.setApellido(estudiante.getApellido());
-        }
-        if (estudiante.getFechaNacimiento() != null) {
-            estudianteActual.setFechaNacimiento(estudiante.getFechaNacimiento());
-        }
-    }
-
-    @Transactional
-    public void eliminarEstudiante(Integer id) {
-        this.estudianteRepository.deleteById(id.longValue());
-    }
-
-    public List<EstudianteRepresentation> listarPorProvincia(String provincia, String genero) {
-        return this.estudianteRepository.find("provincia = ?1 and genero = ?2", provincia, genero).list().stream()
-                .map(this::mapperToER).toList();
-    }
-
     private EstudianteRepresentation mapperToER(Estudiante estudiante) {
         EstudianteRepresentation estudianteRepresentation = new EstudianteRepresentation();
         estudianteRepresentation.setId(estudiante.getId());
@@ -88,4 +36,60 @@ public class EstudianteService {
         estudiante1.setGenero(estudiante.getGenero());
         return estudiante1;
     }
+
+    public List<EstudianteRepresentation> listarTodos() {
+        return this.estudianteRepository.findAll().list().stream()
+                .map(this::mapperToER)
+                .toList();
+    }
+
+    public EstudianteRepresentation consultarPorId(Integer id) {
+        Estudiante e = this.estudianteRepository.findById(id.longValue());
+        if (e == null) {
+            return null;
+        }
+        return this.mapperToER(e);
+    }
+
+    @Transactional
+    public void crearEstudiante(EstudianteRepresentation estudiante) {
+        Estudiante e = this.mapperToEstudiante(estudiante);
+        this.estudianteRepository.persist(e);
+    }
+
+    @Transactional
+    public void actualizarEstudiante(Integer id, EstudianteRepresentation estudiante) {
+        EstudianteRepresentation estudianteActual = this.consultarPorId(id);
+
+        estudianteActual.setNombre(estudiante.getNombre());
+        estudianteActual.setApellido(estudiante.getApellido());
+        estudianteActual.setFechaNacimiento(estudiante.getFechaNacimiento());
+        // se actualiza por dirty checking
+    }
+
+    @Transactional
+    public void actualizacionParcial(Integer id, EstudianteRepresentation estudiante) {
+        Estudiante estudianteActual = this.estudianteRepository.findById(id.longValue());
+
+        if (estudiante.getNombre() != null) {
+            estudianteActual.setNombre(estudiante.getNombre());
+        }
+        if (estudiante.getApellido() != null) {
+            estudianteActual.setApellido(estudiante.getApellido());
+        }
+        if (estudiante.getFechaNacimiento() != null) {
+            estudianteActual.setFechaNacimiento(estudiante.getFechaNacimiento());
+        }
+    }
+
+    @Transactional
+    public void eliminarEstudiante(Integer id) {
+        this.estudianteRepository.deleteById(id.longValue());
+    }
+
+    public List<EstudianteRepresentation> listarPorProvincia(String provincia, String genero) {
+        return this.estudianteRepository.find("provincia = ?1 and genero = ?2", provincia, genero).list().stream()
+                .map(this::mapperToER).toList();
+    }
+
 }
