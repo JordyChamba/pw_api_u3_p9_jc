@@ -75,11 +75,13 @@ public class EstudianteService {
 
     @Transactional
     public void actualizarEstudiante(Integer id, EstudianteRepresentation estudiante) {
-        EstudianteRepresentation estudianteActual = this.consultarPorId(id);
+        Estudiante estudianteActual = this.estudianteRepository.findById(id.longValue());
 
         estudianteActual.setNombre(estudiante.getNombre());
         estudianteActual.setApellido(estudiante.getApellido());
         estudianteActual.setFechaNacimiento(estudiante.getFechaNacimiento());
+        estudianteActual.setProvincia(estudiante.getProvincia());
+        estudianteActual.setGenero(estudiante.getGenero());
         // se actualiza por dirty checking
     }
 
@@ -95,6 +97,12 @@ public class EstudianteService {
         }
         if (estudiante.getFechaNacimiento() != null) {
             estudianteActual.setFechaNacimiento(estudiante.getFechaNacimiento());
+        }
+        if (estudiante.getProvincia() != null) {
+            estudianteActual.setProvincia(estudiante.getProvincia());
+        }
+        if (estudiante.getGenero() != null) {
+            estudianteActual.setGenero(estudiante.getGenero());
         }
     }
 
